@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,11 +7,16 @@
 
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             background-color: #f4f4f4;
             color: #333;
             line-height: 1.6;
             padding: 20px;
+        }
+
+        h2 {
+            color: #2c3e50;
+            text-align: center;
         }
 
         .form-container {
@@ -22,13 +26,6 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        h2 {
-            color: #2c3e50;
-            font-size: 2em;
-            text-align: center;
-            margin-bottom: 20px;
         }
 
         label {
@@ -48,7 +45,7 @@
             background-color: #2980b9;
             color: white;
             padding: 10px 20px;
-            font-size: 1.2em;
+            font-size: 1.1em;
             border: none;
             border-radius: 5px;
             cursor: pointer;
@@ -59,47 +56,36 @@
             background-color: #3498db;
         }
 
-        #status {
-            text-align: center;
-            font-size: 1.2em;
-            margin-top: 20px;
-        }
-
-        /* Popup styles */
-        #popup {
-            display: none;
+        .popup {
             position: fixed;
-            top: 30%;
+            top: 20px;
             left: 50%;
-            transform: translate(-50%, -50%);
-            background: #2ecc71;
+            transform: translateX(-50%);
+            background-color: #2ecc71;
             color: white;
-            padding: 20px;
+            padding: 15px 25px;
             border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            display: none;
             z-index: 999;
         }
 
-        #popup a {
-            color: white;
-            text-decoration: underline;
-            font-weight: bold;
+        .popup.error {
+            background-color: #e74c3c;
         }
 
-        #popup button {
-            margin-top: 10px;
-            background-color: white;
-            color: #2ecc71;
+        .popup a {
+            color: #27ff84;
+            text-decoration: underline;
+            margin-left: 10px;
         }
     </style>
 </head>
-
 <body>
 
     <div class="form-container">
         <h2>Submit Your Code</h2>
-        <p>Submit the code you got from Eshaan. Expect a reply to the email you enter within 24 hours.</p>
+        <p>Submit the code you got from Eshaan. Enter your email so we can contact you for further bonus content. Once done, click Send. You'll see a popup with the link to recieve your gift/discount.</p>
         <form id="codeForm">
             <label for="code">Enter Code:</label>
             <input type="text" id="code" name="code" required>
@@ -109,59 +95,55 @@
 
             <button type="submit">Send</button>
         </form>
-
-        <p id="status"></p>
     </div>
 
-    <div id="popup">
-        <p>✅ Code accepted!<br><a href="https://go.kidslearninglab.com/code-subscription" target="_blank">Go to your subscription link</a></p>
-        <button onclick="closePopup()">Close</button>
-    </div>
+    <div id="popup" class="popup"></div>
 
     <script>
-        function closePopup() {
-            document.getElementById("popup").style.display = "none";
+        const form = document.getElementById("codeForm");
+        const popup = document.getElementById("popup");
+
+        function showPopup(message, isError, link = "") {
+            popup.innerHTML = message;
+            popup.classList.toggle("error", isError);
+            if (link) {
+                const a = document.createElement("a");
+                a.href = link;
+                a.textContent = "Click here";
+                a.target = "_blank";
+                popup.appendChild(a);
+            }
+            popup.style.display = "block";
+            setTimeout(() => {
+                popup.style.display = "none";
+            }, 5000);
         }
 
-        document.getElementById("codeForm").addEventListener("submit", function (event) {
-            event.preventDefault();
-
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
             const code = document.getElementById("code").value.trim();
             const email = document.getElementById("email").value.trim();
 
-            const formData = {
-                code: code,
-                email: email,
-                message: `The code ${code} was used.\nReply email: ${email}`
-            };
-
+            // Always send to Formspree
             fetch("https://formspree.io/f/mldjgobk", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(formData)
-            })
-                .then(response => {
-                    if (response.ok) {
-                        if (code === "3MOFREE") {
-                            document.getElementById("popup").style.display = "block";
-                        } else {
-                            document.getElementById("status").innerText = "Code submitted successfully!";
-                            document.getElementById("status").style.color = "#2ecc71";
-                        }
-                        document.getElementById("codeForm").reset();
-                    } else {
-                        document.getElementById("status").innerText = "Error sending email.";
-                        document.getElementById("status").style.color = "#e74c3c";
-                    }
+                body: JSON.stringify({
+                    code: code,
+                    email: email,
+                    message: `The code ${code} was used.\nReply email: ${email}`
                 })
-                .catch(error => {
-                    document.getElementById("status").innerText = "Error sending email.";
-                    document.getElementById("status").style.color = "#e74c3c";
-                    console.error("Error:", error);
-                });
+            });
+
+            if (code === "3MOFREE") {
+                showPopup("Code accepted! 🎉", false, "https://go.kidslearninglab.com/code-subscription");
+            } else {
+                showPopup("Wrong code ❌", true);
+            }
+
+            form.reset();
         });
     </script>
 
 </body>
-
 </html>
