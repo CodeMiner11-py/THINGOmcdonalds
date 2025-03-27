@@ -1,37 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Submit Code</title>
-    
-    <!-- Google Fonts (Optional for more font styles) -->
-    <link href="https://fonts.googleapis.com/css2?family=Arial&display=swap" rel="stylesheet">
 
     <style>
-        /* General reset */
-        body, h1, h2, p, label, input, button {
-            margin: 0;
-            padding: 0;
-        }
-
-        /* Global Styles */
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             color: #333;
             line-height: 1.6;
             padding: 20px;
         }
 
-        h2 {
-            color: #2c3e50;
-            font-size: 2em;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        /* Form Container */
         .form-container {
             max-width: 600px;
             margin: 0 auto;
@@ -41,19 +24,24 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
+        h2 {
+            color: #2c3e50;
+            font-size: 2em;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
         label {
-            font-size: 1.1em;
-            margin-bottom: 5px;
             display: block;
+            margin-top: 10px;
         }
 
         input {
             width: 100%;
             padding: 10px;
-            margin: 10px 0 20px 0;
+            margin-top: 5px;
             border: 1px solid #ddd;
             border-radius: 5px;
-            font-size: 1em;
         }
 
         button {
@@ -64,21 +52,49 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            margin-top: 15px;
         }
 
         button:hover {
             background-color: #3498db;
         }
 
-        p {
+        #status {
             text-align: center;
             font-size: 1.2em;
-            color: #e74c3c;
             margin-top: 20px;
+        }
+
+        /* Popup styles */
+        #popup {
+            display: none;
+            position: fixed;
+            top: 30%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #2ecc71;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            z-index: 999;
+        }
+
+        #popup a {
+            color: white;
+            text-decoration: underline;
+            font-weight: bold;
+        }
+
+        #popup button {
+            margin-top: 10px;
+            background-color: white;
+            color: #2ecc71;
         }
     </style>
 </head>
+
 <body>
 
     <div class="form-container">
@@ -97,12 +113,21 @@
         <p id="status"></p>
     </div>
 
+    <div id="popup">
+        <p>✅ Code accepted!<br><a href="https://go.kidslearninglab.com/code-subscription" target="_blank">Go to your subscription link</a></p>
+        <button onclick="closePopup()">Close</button>
+    </div>
+
     <script>
-        document.getElementById("codeForm").addEventListener("submit", function(event) {
+        function closePopup() {
+            document.getElementById("popup").style.display = "none";
+        }
+
+        document.getElementById("codeForm").addEventListener("submit", function (event) {
             event.preventDefault();
 
-            const code = document.getElementById("code").value;
-            const email = document.getElementById("email").value;
+            const code = document.getElementById("code").value.trim();
+            const email = document.getElementById("email").value.trim();
 
             const formData = {
                 code: code,
@@ -110,28 +135,33 @@
                 message: `The code ${code} was used.\nReply email: ${email}`
             };
 
-            fetch("https://formspree.io/f/mldjgobk", { // Your Formspree endpoint
+            fetch("https://formspree.io/f/mldjgobk", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData)
             })
-            .then(response => {
-                if (response.ok) {
-                    document.getElementById("status").innerText = "Email sent successfully!";
-                    document.getElementById("status").style.color = "#2ecc71"; // Success color
-                    document.getElementById("codeForm").reset();
-                } else {
+                .then(response => {
+                    if (response.ok) {
+                        if (code === "3MOFREE") {
+                            document.getElementById("popup").style.display = "block";
+                        } else {
+                            document.getElementById("status").innerText = "Code submitted successfully!";
+                            document.getElementById("status").style.color = "#2ecc71";
+                        }
+                        document.getElementById("codeForm").reset();
+                    } else {
+                        document.getElementById("status").innerText = "Error sending email.";
+                        document.getElementById("status").style.color = "#e74c3c";
+                    }
+                })
+                .catch(error => {
                     document.getElementById("status").innerText = "Error sending email.";
-                    document.getElementById("status").style.color = "#e74c3c"; // Error color
-                }
-            })
-            .catch(error => {
-                document.getElementById("status").innerText = "Error sending email.";
-                document.getElementById("status").style.color = "#e74c3c"; // Error color
-                console.error("Error:", error);
-            });
+                    document.getElementById("status").style.color = "#e74c3c";
+                    console.error("Error:", error);
+                });
         });
     </script>
 
 </body>
+
 </html>
