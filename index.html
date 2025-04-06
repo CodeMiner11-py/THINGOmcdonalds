@@ -7,63 +7,7 @@
     <title>Submit Code</title>
 
     <style>
-        body.home::before {
-	content: "";
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100vw;
-	height: 100vh;
-	background: #000 url('https://kidslearninglab.com/wp-content/uploads/2025/02/podcast-logo-app-rounded.png') no-repeat center 40%;
-	background-size: 100px 100px;
-	z-index: 9999;
-	animation: fadeOutOverlay 2s ease-in-out forwards;
-	animation-delay: 1.5s;
-/* Increased delay */
-	pointer-events: none;
-}
-
-/* Purple animated loading bar */
-body.home::after {
-	content: "";
-	position: fixed;
-	top: 60%;
-	left: -100%;
-	width: 200px;
-	height: 6px;
-	background-color: #fff;
-	border-radius: 3px;
-	z-index: 9999;
-	animation: loadingSlide 2s infinite, fadeOutOverlay 1.5s ease-in-out forwards;
-/* Adjusted fadeOut duration */
-	animation-delay: 0s, 2s;
-/* Adjusted fadeOut delay */
-	pointer-events: none;
-}
-
-/* Bar slide animation */
-@keyframes loadingSlide {
-	0% {
-		left: -100%;
-	}
-	
-	50% {
-		left: 50%;
-	}
-	
-	100% {
-		left: 100%;
-	}
-}
-
-/* Fade out both bar and overlay */
-@keyframes fadeOutOverlay {
-	to {
-		opacity: 0;
-		visibility: hidden;
-	}
-}
-
+        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000 url('https://kidslearninglab.com/wp-content/uploads/2025/02/podcast-logo-app-rounded.png') no-repeat center 40%; background-size: 100px 100px; z-index: 9999; animation: fadeOutOverlay 2s ease-in-out forwards; animation-delay: 1.5s; /* Increased delay */ pointer-events: none; } /* Purple animated loading bar */ body::after { content: ""; position: fixed; top: 60%; left: -100%; width: 200px; height: 6px; background-color: #fff; border-radius: 3px; z-index: 9999; animation: loadingSlide 2s infinite, fadeOutOverlay 1.5s ease-in-out forwards; /* Adjusted fadeOut duration */ animation-delay: 0s, 2s; /* Adjusted fadeOut delay */ pointer-events: none; } /* Bar slide animation */ @keyframes loadingSlide { 0% { left: -100%; } 50% { left: 50%; } 100% { left: 100%; } } /* Fade out both bar and overlay */ @keyframes fadeOutOverlay { to { opacity: 0; visibility: hidden; } }
         body {
             font-family: 'Arial', sans-serif;
             background-color: #f4f4f4;
